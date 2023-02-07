@@ -114,3 +114,10 @@ conf/.config/keybase/
 # Pipenv
 
 Pipfile*
+
+## local folders
+bin
+*.backup
+*.old
+*.idea
+*.vscode

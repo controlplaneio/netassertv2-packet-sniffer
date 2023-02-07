@@ -1,0 +1,70 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: echoserver
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: busybox
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: echoserver
+  namespace: echoserver
+  labels:
+    app: echoserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: echoserver
+  template:
+    metadata:
+      labels:
+        app: echoserver
+    spec:
+#      securityContext:
+#        runAsUser: 1000
+#        runAsGroup: 3000
+#        fsGroup: 2000
+      containers:
+        - name: echoserver
+          image: k8s.gcr.io/e2e-test-images/echoserver:2.5
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              name: web
+#          env:
+#            - name: PORT
+#              value: "9090"
+          resources:
+            requests:
+              memory: 64Mi
+              cpu: 300m
+            limits:
+              memory: 64Mi
+              cpu: 400m
+          securityContext:
+            allowPrivilegeEscalation: false
+            privileged: false
+      #serviceAccountName: disable-automount-default-sa-controller-sa
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox1
+  namespace: busybox
+  labels:
+    app: busybox1
+spec:
+  containers:
+    - image: busybox
+      command:
+        - sleep
+        - "360000"
+      imagePullPolicy: IfNotPresent
+      name: busybox
+  restartPolicy: Always
