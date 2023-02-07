@@ -35,7 +35,7 @@ func main() {
 		SearchString     string `conf:"default:foo,flag:search-string,env:SEARCH_STRING"`
 		Protocol         string `conf:"default:tcp,protocol:tcp,flag:protocol,env:PROTOCOL"`
 		NumberOfMatches  int    `conf:"default:3,flag:matches,env:MATCHES"`
-		TimeoutSeconds   int    `conf:"default:60,flag:timeout-seconds,env:TIMEOUT"`
+		TimeoutSeconds   int    `conf:"default:60,flag:timeout-seconds,env:TIMEOUT_SECONDS"`
 	}
 
 	var (
