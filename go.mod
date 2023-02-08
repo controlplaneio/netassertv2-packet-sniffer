@@ -1,4 +1,4 @@
-module github.com/controlplaneio/packet-capture-netassert
+module github.com/controlplaneio/netassertv2-packet-sniffer
 
 go 1.19
 

@@ -12,8 +12,8 @@ import (
 	"time"
 
 	"github.com/ardanlabs/conf/v3"
-	"github.com/controlplaneio/packet-capture-netassert/pkg/logger"
-	"github.com/controlplaneio/packet-capture-netassert/pkg/packets"
+	"github.com/controlplaneio/netassertv2-packet-sniffer/pkg/logger"
+	"github.com/controlplaneio/netassertv2-packet-sniffer/pkg/packets"
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/pcap"
 )

@@ -166,7 +166,7 @@ func (cp *StringSearchService) searchStringInPacket(data PacketData, searchStr s
 		return false, ErrEmptyStringMatch
 	}
 
-	// grab the payload or data contained in the packet
+	// grab the data contained in the packet
 	payload := data.LayerPayload()
 
 	if len(payload) <= 0 {

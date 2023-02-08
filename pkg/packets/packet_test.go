@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/controlplaneio/packet-capture-netassert/pkg/logger"
+	"github.com/controlplaneio/netassertv2-packet-sniffer/pkg/logger"
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/layers"
 	"github.com/stretchr/testify/require"
