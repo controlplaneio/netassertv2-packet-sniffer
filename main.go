@@ -19,11 +19,12 @@ import (
 )
 
 var (
-	version     = "development"    // version that will be overridden by LD flag(s)
-	service     = "packet-capture" // service/appliation name to be overridden by LD flag
-	environment = "development"    // environment can be production or development
+	version = "development"    // version that will be overridden by LD flag(s)
+	service = "packet-capture" // service/application name to be overridden by LD flag
+
 )
 
+// processTimeout - time to process each packet
 const processTimeout = 500 * time.Millisecond
 
 func main() {
@@ -32,10 +33,12 @@ func main() {
 		NetworkInterface string `conf:"default:eth0,flag:interface,env:IFACE"`
 		SnapLen          int32  `conf:"default:1024,flag:snaplen,env:SNAPLEN"`
 		Promisc          bool   `conf:"default:false,flag:promisc,env:PROMISC"`
-		SearchString     string `conf:"default:foo,flag:search-string,env:SEARCH_STRING"`
-		Protocol         string `conf:"default:tcp,protocol:tcp,flag:protocol,env:PROTOCOL"`
-		NumberOfMatches  int    `conf:"default:3,flag:matches,env:MATCHES"`
-		TimeoutSeconds   int    `conf:"default:60,flag:timeout-seconds,env:TIMEOUT_SECONDS"`
+		SearchString     string `conf:"default:control-plane.io,flag:search-string,env:SEARCH_STRING"`
+		Protocol         string `conf:"default:tcp,flag:protocol,env:PROTOCOL"`
+		// environment can be production or development
+		Environment     string `conf:"default:production,flag:environment,env:ENV"`
+		NumberOfMatches int    `conf:"default:3,flag:matches,env:MATCHES"`
+		TimeoutSeconds  int    `conf:"default:60,flag:timeout-seconds,env:TIMEOUT_SECONDS"`
 	}
 
 	var (
@@ -54,34 +57,35 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Printf("Working with following configuration:\n%+v\n", cfg)
-
-	lg, err := logger.New(version, service, environment)
+	lg, err := logger.New(version, service, cfg.Environment)
 	if err != nil {
 		fmt.Println("failed to initialise the logger", err)
 		os.Exit(1)
 	}
 
-	_ = lg.Sync()
+	defer func() {
+		_ = lg.Sync()
+	}()
 
+	lg.Infof("Working with following configuration:\n%+v\n", cfg)
 	handle, err := pcap.OpenLive(
 		cfg.NetworkInterface, // name of the interface to capture
 		cfg.SnapLen,          // snap length
 		cfg.Promisc,          // set the interface in promiscuous mode
-		processTimeout,       // we might miss some packet but this should be fine
+		processTimeout,       // ticker
 	)
 
 	//nolint:staticcheck // Close function does not return anything
 	defer handle.Close()
 
 	if err != nil {
-		fmt.Printf("unable to capture packet on the %s interface - %v", cfg.NetworkInterface, err)
+		lg.Infof("unable to capture packet on the %s interface - %v", cfg.NetworkInterface, err)
 		_ = lg.Sync()
 		os.Exit(1)
 	}
 
 	if err := handle.SetBPFFilter(strings.ToLower(cfg.Protocol)); err != nil {
-		fmt.Printf("unable to set BPF filter to %q: %v", cfg.Protocol, err)
+		lg.Infof("unable to set BPF filter to %q: %v", cfg.Protocol, err)
 		_ = lg.Sync()
 		handle.Close()
 		os.Exit(1)
@@ -91,10 +95,10 @@ func main() {
 		Log: lg,
 	}
 
-	cs.Log.Infof("capturing %q traffic on %q interface", cfg.Protocol, cfg.NetworkInterface)
+	lg.Infof("capturing %q traffic on %q interface", cfg.Protocol, cfg.NetworkInterface)
 	packetSource := gopacket.NewPacketSource(handle, handle.LinkType())
 
-	cs.Log.Infof("starting to process packets")
+	lg.Info("starting to process packets")
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()

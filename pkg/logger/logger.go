@@ -10,7 +10,8 @@ import (
 
 // New constructs a Sugared Logger that writes to stdout and
 // provides human-readable timestamps
-func New(version, service, environment string, outputPaths ...string) (*zap.SugaredLogger, error) {
+func New(version, service, environment string, outputPaths ...string) (
+	*zap.SugaredLogger, error) {
 	var config zap.Config
 
 	switch strings.ToLower(environment) {

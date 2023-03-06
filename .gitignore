@@ -120,4 +120,4 @@ bin
 *.backup
 *.old
 *.idea
-*.vscode
+*.vscodeintegration-test

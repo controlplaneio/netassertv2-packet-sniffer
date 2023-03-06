@@ -26,10 +26,6 @@ spec:
       labels:
         app: echoserver
     spec:
-#      securityContext:
-#        runAsUser: 1000
-#        runAsGroup: 3000
-#        fsGroup: 2000
       containers:
         - name: echoserver
           image: k8s.gcr.io/e2e-test-images/echoserver:2.5
@@ -37,9 +33,6 @@ spec:
           ports:
             - containerPort: 8080
               name: web
-#          env:
-#            - name: PORT
-#              value: "9090"
           resources:
             requests:
               memory: 64Mi
@@ -50,7 +43,6 @@ spec:
           securityContext:
             allowPrivilegeEscalation: false
             privileged: false
-      #serviceAccountName: disable-automount-default-sa-controller-sa
 ---
 apiVersion: v1
 kind: Pod
@@ -67,4 +59,12 @@ spec:
         - "360000"
       imagePullPolicy: IfNotPresent
       name: busybox
+      resources:
+        requests:
+          memory: 64Mi
+          cpu: 300m
+        limits:
+          memory: 64Mi
+          cpu: 400m
   restartPolicy: Always
+  
