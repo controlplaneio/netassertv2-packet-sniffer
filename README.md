@@ -1,6 +1,6 @@
-# Netassertv2-Packet-sniffer
+# Netassertv2-Packet-Sniffer
 
-The `Netassertv2-l4-client` is a Go program designed to sniff layer 4 (TCP or UDP) traffic and identify specific strings within it. It accepts the following environment variables:
+The `Netassertv2-Packet-Sniffer` is a Go program designed to sniff layer 4 (TCP or UDP) traffic and identify specific strings within it. It accepts the following environment variables:
 
 | Environment Variable | Go Type | Default Value | Purpose |
 | --- | --- | --- | --- |
