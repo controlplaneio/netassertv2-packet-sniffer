@@ -121,3 +121,4 @@ bin
 *.old
 *.idea
 *.vscodeintegration-test
+netassertv2-packet-sniffer
