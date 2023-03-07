@@ -6,3 +6,5 @@ Jenkinsfile*
 .idea/
 *.iml
 .gcloudignore
+bin
+*.md

@@ -114,3 +114,11 @@ conf/.config/keybase/
 # Pipenv
 
 Pipfile*
+
+## local folders
+bin
+*.backup
+*.old
+*.idea
+*.vscodeintegration-test
+netassertv2-packet-sniffer
