@@ -3,17 +3,8 @@ name: Linting - Go
 on:
   push:
     branches: ['master', 'packet-sniffer-init']
-    paths:
-      - "**.go"
-      - "go.mod"
-      - "go.sum"
-
   pull_request:
     branches: [master]
-    paths:
-      - "**.go"
-      - "go.mod"
-      - "go.sum"
 
 jobs:
   golangci-lint:
