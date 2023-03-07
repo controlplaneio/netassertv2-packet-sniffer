@@ -1,17 +1,15 @@
 name: Docker publish
 
 on:
-  push:
-    branches:
-      - 'main'
-      - 'packet-sniffer-init'
+  workflow_run:
+    workflows: ["Lint and Build"]
+    types: [completed]
+    branches: ['main', 'packet-sniffer-init']
 
 jobs:
   docker:
     runs-on: ubuntu-latest
-    needs:
-      - lint
-      - build
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
