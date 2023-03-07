@@ -6,11 +6,23 @@ on:
     branches: [master]
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install libpcap-dev
+        run: sudo apt install -y libpcap-dev
+      
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Run golangci-lint
+        uses: reviewdog/action-golangci-lint@v2
+        with:
+          go_version: "1.20"
   build:
     runs-on: ubuntu-latest
-
+    needs: lint
     steps:
-
       - name: Install libpcap-dev
         run: sudo apt install -y libpcap-dev
     
@@ -21,9 +33,6 @@ jobs:
         uses: actions/setup-go@v3
         with:
           go-version: '1.20.x'
-
-      - name: Run golangci-lint
-        uses: reviewdog/action-golangci-lint@v2
 
       - name: Install dependencies
         run: go get .
