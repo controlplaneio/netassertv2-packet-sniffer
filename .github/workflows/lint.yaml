@@ -1,0 +1,27 @@
+---
+name: Linting - Go
+on:
+  push:
+    branches: ['master', 'packet-sniffer-init']
+    paths:
+      - "**.go"
+      - "go.mod"
+      - "go.sum"
+
+  pull_request:
+    branches: [master]
+    paths:
+      - "**.go"
+      - "go.mod"
+      - "go.sum"
+
+jobs:
+  golangci-lint:
+    name: golangci-lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Run golangci-lint
+        uses: reviewdog/action-golangci-lint@v2
