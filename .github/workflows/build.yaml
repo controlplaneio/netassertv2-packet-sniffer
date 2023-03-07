@@ -1,7 +1,7 @@
 name: Build - Go
 on:
   push:
-    branches: [master]
+    branches: ['master', 'packet-sniffer-init']
   pull_request:
     branches: [master]
 
