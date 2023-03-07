@@ -17,8 +17,20 @@ It is important to note that the program needs to run with root privileges(uid:g
 
 You can pull the latest Docker image from `docker.io/controlplane/netassertv2-packet-sniffer:latest`
 
+## Libpacap Prerequisite
+
+- This program uses the [Go Packet](https://github.com/google/gopacket) library for packet processing and uses C Bindings for libpcap. Therefore, you need to install libpacp dependencies for your OS to compile the program.
+
+```bash
+For Fedora/RHEL/CentOS
+$ sudo dnf install libpcap-devel
+For Debian/Ubuntu
+$ sudo apt update && sudo apt install libpcap-dev -y
+
+```
 
 ## Local testing
+
 You can build and test the binary with the help of `netcat` server. To test the `TCP` protocol, run the following commands on different terminals:
 
 In the first terminal run the packet sniffer, you will need to enter sudo password:
