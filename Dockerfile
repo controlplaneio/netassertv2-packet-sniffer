@@ -16,11 +16,14 @@ FROM alpine:3.17.2
 
 COPY --from=builder /packet-capture /usr/bin/packet-capture
 
-### We cannot run as non-root user at we need root privileges to
-### capture traffic on the system
+### We can avoid to run as root by explicitly setting the CAP_NET_RAW capability to the sniffer binary.
+### This capability is usually allowed by default by the container runtime but it can be explicitely
+### provided using --cap-add NET_RAW (Docker) at runtime
 RUN apk update && \
-    apk add --no-cache libpcap-dev && \
-    chmod a+x /usr/bin/packet-capture
+    apk add --no-cache libpcap-dev libcap && \
+    chmod a+x /usr/bin/packet-capture && \
+    setcap cap_net_raw+ep /usr/bin/packet-capture
 
+# user nobody, the "RunAsNonRoot" requires to have an uid
+USER 65534
 ENTRYPOINT [ "/usr/bin/packet-capture" ]
-#ENTRYPOINT [ "/bin/sh" ]
