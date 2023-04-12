@@ -51,3 +51,19 @@ jobs:
 
       - name: Build
         run: go build -v ./...
+
+      - name: Build an image from Dockerfile
+        run: |
+          docker build -t controlplane/netassertv2-packet-sniffer:${{ github.sha }} .
+      
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'controlplane/netassertv2-packet-sniffer:${{ github.sha }}'
+          format: 'table'
+          exit-code: '1'
+          vuln-type: 'os,library'
+          output: 'trivy-results.txt'
+          severity: 'CRITICAL,HIGH,MEDIUM'
+      
+      - run: cat trivy-results.txt
