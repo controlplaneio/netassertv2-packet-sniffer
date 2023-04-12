@@ -13,7 +13,6 @@ The `Netassertv2-Packet-Sniffer` is a Go program designed to sniff layer 4 (TCP 
 | TIMEOUT_SECONDS | int | 60 | The total duration during which we will capture the traffic. If we do not get enough matches (defined by `$MATCHES`) during this time, we exit with a status code of 1 |
 
 If the specified number of matches are found within the defined timeout period, the program will exit with a status code of 0. If the required matches are not found within the given time, the program will exit with a status code of 1.
-It is important to note that the program needs to run with root privileges(uid:gid 0:0), as it requires read access to the network interface card.
 
 You can pull the latest Docker image from `docker.io/controlplane/netassertv2-packet-sniffer:latest`
 
