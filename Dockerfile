@@ -8,7 +8,7 @@ RUN apk add --no-cache build-base libpcap-dev && \
     GO111MODULE=on CGO_ENABLED=1 GOOS=linux go build -v -o /packet-capture . && \
     ls -ltr /packet-capture
 
-FROM alpine:3.17.2
+FROM alpine:3.17.3
 
 # we need to install libpcap-dev or else we will end up with the following errors:
 ## Error loading shared library libpcap.so.1: No such file or directory (needed by /usr/bin/packet-capture)
