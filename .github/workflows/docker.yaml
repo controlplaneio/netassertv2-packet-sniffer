@@ -40,7 +40,7 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: 'docker.io/nginx'
+          image-ref: controlplane/netassertv2-packet-sniffer:${{ github.ref_name }}
           format: table
           output: 'trivy-results.txt'
           #format: 'sarif'
