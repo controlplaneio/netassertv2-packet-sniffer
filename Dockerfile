@@ -9,12 +9,12 @@ RUN apk add --no-cache build-base libpcap-dev && \
 
 FROM alpine:3.17
 
-# we need to install libpcap-dev or else we will end up with the following errors:
-## Error loading shared library libpcap.so.1: No such file or directory (needed by /usr/bin/packet-capture)
-## Error relocating /usr/bin/packet-capture: pcap_set_tstamp_type: symbol not found
-
 COPY --from=builder /packet-capture /usr/bin/packet-capture
 
+### we need to install libpcap-dev or else we will end up with the following errors:
+### Error loading shared library libpcap.so.1: No such file or directory (needed by /usr/bin/packet-capture)
+### Error relocating /usr/bin/packet-capture: pcap_set_tstamp_type: symbol not found\
+#
 ### We can avoid to run as root by explicitly setting the CAP_NET_RAW capability to the sniffer binary.
 ### This capability is usually allowed by default by the container runtime but it can be explicitely
 ### provided using --cap-add NET_RAW (Docker) at runtime
