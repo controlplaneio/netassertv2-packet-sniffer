@@ -1,5 +1,8 @@
 # Netassertv2-Packet-Sniffer
 
+[![Testing Workflow][testing_workflow_badge]][testing_workflow_badge]
+[![Release Workflow][release_workflow_badge]][release_workflow_badge]
+
 The `Netassertv2-Packet-Sniffer` is a Go program designed to sniff layer 4 (TCP or UDP) traffic and identify specific strings within it. It accepts the following environment variables:
 
 | Environment Variable | Go Type | Default Value | Purpose |
@@ -80,3 +83,6 @@ The sniffer on the first terminal should exit with the following message:
 ```bash
 2023-03-06T17:04:18.654Z	info	netassertv2-packet-sniffer/main.go:140	number of matches reached{"service": "packet-capture", "version": "development"}
 ```
+
+[testing_workflow_badge]: https://github.com/controlplaneio/netassertv2-packet-sniffer/workflows/Lint%20and%20Build/badge.svg
+[release_workflow_badge]: https://github.com/controlplaneio/netassertv2-packet-sniffer/workflows/Docker%20build%20and%20publish/badge.svg
