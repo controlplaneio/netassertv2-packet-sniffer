@@ -1,12 +1,12 @@
 build:
-	@go build -o bin/packet-capture main.go
+	@go build -o bin/packet-capture .
 
 run: build
 	@bin/packet-capture
 
-run-tcp:
+run-tcp: build
 	sudo bin/packet-capture -protocol=tcp -interface=lo -matches 3
-run-udp:
+run-udp: build
 	sudo bin/packet-capture -protocol=udp -interface=lo -matches 3
 
 run-netcat-tcp-server:
