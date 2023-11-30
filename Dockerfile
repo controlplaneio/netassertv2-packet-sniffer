@@ -7,7 +7,7 @@ RUN apk add --no-cache build-base libpcap-dev && \
     # we need to enable CGO as we need to compile with libpcap bindings
     GO111MODULE=on CGO_ENABLED=1 GOOS=linux go build -v -o /packet-capture .
 
-FROM alpine:3.17
+FROM alpine:3.18
 
 COPY --from=builder /packet-capture /usr/bin/packet-capture
 

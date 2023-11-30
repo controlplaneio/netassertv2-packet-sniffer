@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-
+	
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/layers"
 	"go.uber.org/zap"
@@ -38,25 +38,32 @@ type StringSearchService struct {
 	Log *zap.SugaredLogger
 }
 
+// NewStringSearchService - returns a new instance of the StringSearchService
+func NewStringSearchService(log *zap.SugaredLogger) *StringSearchService {
+	return &StringSearchService{
+		Log: log,
+	}
+}
+
 // FindStringInTCPOrUDPPacket - processes TCP or UDP packets and checks if the data payload contains a string
-func (cp *StringSearchService) FindStringInTCPOrUDPPacket(
+func (svc *StringSearchService) FindStringInTCPOrUDPPacket(
 	ctx context.Context,
 	gp gopacket.Packet,
 	searchString string,
 ) (bool, error) {
-
+	
 	// result will hold the result of the packet processing and match
 	type result struct {
 		match bool
 		err   error
 	}
-
+	
 	// result channel will communicate the results of the processing
 	resultCh := make(chan result)
-
+	
 	// Process the gp in a go routine
 	go func(resultCh chan result, gp gopacket.Packet) {
-
+		
 		// check if the context has been cancelled by the caller
 		select {
 		case <-ctx.Done():
@@ -67,19 +74,19 @@ func (cp *StringSearchService) FindStringInTCPOrUDPPacket(
 			resultCh <- r
 		default:
 		}
-
+		
 		var (
 			tcpLayer    = gp.Layer(layers.LayerTypeTCP)
 			udpLayer    = gp.Layer(layers.LayerTypeUDP)
 			packetLayer gopacket.Layer
 			msg         string
 		)
-
+		
 		// we only work with TCP or UDP packets
 		// and assume that the caller of the function will only send a TCP/UDP packet
 		// this is taken care by using a BPF filter `tcp or udp` in the main routine
 		if tcpLayer == nil && udpLayer == nil {
-			cp.Log.Error(ErrNonTCPUDPPacket)
+			svc.Log.Error(ErrNonTCPUDPPacket)
 			r := result{
 				match: false,
 				err:   ErrNonTCPUDPPacket,
@@ -87,7 +94,7 @@ func (cp *StringSearchService) FindStringInTCPOrUDPPacket(
 			resultCh <- r
 			return
 		}
-
+		
 		if tcpLayer != nil {
 			// tempLayer is local scoped here
 			tempLayer, ok := tcpLayer.(*layers.TCP)
@@ -102,7 +109,7 @@ func (cp *StringSearchService) FindStringInTCPOrUDPPacket(
 			msg = fmt.Sprintf("sourcePort:%q destinationPort=%q", tempLayer.SrcPort, tempLayer.DstPort)
 			packetLayer = tempLayer
 		}
-
+		
 		if udpLayer != nil {
 			// tempLayer is local scoped here
 			tempLayer, ok := udpLayer.(*layers.UDP)
@@ -117,7 +124,7 @@ func (cp *StringSearchService) FindStringInTCPOrUDPPacket(
 			msg = fmt.Sprintf("sourcePort:%q destinationPort=%q", tempLayer.SrcPort, tempLayer.DstPort)
 			packetLayer = tempLayer
 		}
-
+		
 		// if IPv4 layer exists then we can print the source and the destination of the packet
 		if ipLayer := gp.Layer(layers.LayerTypeIPv4); ipLayer != nil {
 			if ipv4Layer, ok := ipLayer.(*layers.IPv4); ok {
@@ -125,24 +132,24 @@ func (cp *StringSearchService) FindStringInTCPOrUDPPacket(
 					msg, ipv4Layer.SrcIP, ipv4Layer.DstIP)
 			}
 		}
-
+		
 		// search for the string in the packet
-		foundMatch, matchErr := cp.searchStringInPacket(packetLayer, searchString)
-
+		foundMatch, matchErr := svc.searchStringInPacket(packetLayer, searchString)
+		
 		if foundMatch {
 			// if match is found then output the packet details
-			cp.Log.Info("found match ", msg)
+			svc.Log.Info("found match ", msg)
 		}
-
+		
 		r := result{
 			match: foundMatch,
 			err:   matchErr,
 		}
-
+		
 		resultCh <- r
-
+		
 	}(resultCh, gp)
-
+	
 	// wait for the result channel or the context to be cancelled
 	select {
 	case res := <-resultCh:
@@ -150,37 +157,37 @@ func (cp *StringSearchService) FindStringInTCPOrUDPPacket(
 	case <-ctx.Done():
 		return false, ctx.Err()
 	}
-
+	
 }
 
 // searchStringInPacket - searches for a string in PacketData
-func (cp *StringSearchService) searchStringInPacket(data PacketData, searchStr string) (bool, error) {
-
+func (svc *StringSearchService) searchStringInPacket(data PacketData, searchStr string) (bool, error) {
+	
 	if data == nil {
-		cp.Log.Errorf("nil packet was passed for processing")
+		svc.Log.Errorf("nil packet was passed for processing")
 		return false, ErrNilPacket
 	}
-
+	
 	if searchStr == "" {
-		cp.Log.Errorf("empty string can not be searched on the packet payload")
+		svc.Log.Errorf("empty string can not be searched on the packet payload")
 		return false, ErrEmptyStringMatch
 	}
-
+	
 	// grab the data contained in the packet
 	payload := data.LayerPayload()
-
+	
 	if len(payload) <= 0 {
-		cp.Log.Debug("skipping processing of packet that has no data")
+		svc.Log.Debug("skipping processing of packet that has no data")
 		return false, nil
 	}
-
+	
 	payloadStr := string(payload)
-
+	
 	// this is a case-sensitive match
 	if strings.Contains(payloadStr, searchStr) {
-		cp.Log.Infof("found string %q in the packet payload", searchStr)
+		svc.Log.Infof("found string %q in the packet payload", searchStr)
 		return true, nil
 	}
-
+	
 	return false, nil
 }
