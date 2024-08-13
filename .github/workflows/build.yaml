@@ -24,7 +24,7 @@ jobs:
       - name: Run golangci-lint
         uses: reviewdog/action-golangci-lint@v2
         with:
-          go_version: "1.20"
+          go_version: "1.22"
 
       - name: Run hadolint
         uses: reviewdog/action-hadolint@v1
@@ -41,7 +41,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v3
         with:
-          go-version: '1.20.x'
+          go-version: '1.22.x'
 
       - name: Install dependencies
         run: go get .
