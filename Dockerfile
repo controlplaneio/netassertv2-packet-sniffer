@@ -1,4 +1,4 @@
-FROM golang:1.22-alpine AS builder
+FROM golang:1.24-alpine AS builder
 COPY . /build
 WORKDIR /build
 RUN apk add --no-cache build-base libpcap-dev && \
@@ -8,7 +8,7 @@ RUN apk add --no-cache build-base libpcap-dev && \
     # we need to enable CGO as we need to compile with libpcap bindings
     GO111MODULE=on CGO_ENABLED=1 GOOS=linux go build -v -o /packet-capture .
 
-FROM alpine:3.18
+FROM alpine:3.21
 
 COPY --from=builder /packet-capture /usr/bin/packet-capture
 
