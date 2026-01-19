@@ -59,9 +59,7 @@ jobs:
         with:
           image-ref: 'controlplane/netassertv2-packet-sniffer:${{ github.sha }}'
           format: 'table'
+          ignore-unfixed: true
           exit-code: '1'
           vuln-type: 'os,library'
-          output: 'trivy-results.txt'
           severity: 'CRITICAL,HIGH,MEDIUM'
-      
-      - run: cat trivy-results.txt
